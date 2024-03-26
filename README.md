@@ -1,6 +1,6 @@
 # pxq-java
 
-java -jar pxq-java-1.0.0.jar &
+java -jar pxq-java-1.0.0.jar
 
 ## 凤凰传奇常州场
 ```
