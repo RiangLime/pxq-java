@@ -1,5 +1,7 @@
 # pxq-java
 
+java -jar pxq-java-1.0.0.jar &
+
 ## 凤凰传奇常州场
 ```
 showId:65fd35f1fb494c000126d380
