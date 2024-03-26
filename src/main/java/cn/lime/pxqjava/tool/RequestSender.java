@@ -525,7 +525,15 @@ public class RequestSender {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                System.out.println("下单成功！请尽快支付！");
+                String responseData = response.body().string();
+
+                JSONObject jsonObject = JSONObject.parseObject(responseData);
+                if (jsonObject.getInteger("statusCode") == 200) {
+                    System.out.println("下单成功！请尽快支付！");
+                    System.out.println(jsonObject.toJSONString());
+                } else {
+                    throw new IOException("createOrder异常" + responseData);
+                }
             } else {
                 throw new IOException("下单异常: " + response.body().string());
             }
