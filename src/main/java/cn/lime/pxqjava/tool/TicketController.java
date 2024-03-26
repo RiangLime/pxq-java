@@ -46,7 +46,7 @@ public class TicketController {
         dto.setBuyCount(Integer.valueOf(buyCount));
         dto.setToken(token);
         List<Integer> audiencesIndexes = new ArrayList<>();
-        for (String s : ids.split(",")) {
+        for (String s : ids.split("_")) {
             audiencesIndexes.add(Integer.valueOf(s));
         }
         dto.setAudienceIndexes(audiencesIndexes);
