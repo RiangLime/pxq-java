@@ -21,7 +21,7 @@ public class TicketController {
     private SendService service;
 
     @PostMapping("/ticket/start/post")
-    public String startTicketPost(@RequestBody BizDto dto){
+    public String startTicketPost(@RequestBody BizDto dto) throws InterruptedException {
         service.deal(dto);
         return "success";
     }
@@ -34,7 +34,7 @@ public class TicketController {
                                  @RequestParam("userSeatId") String userSeatId,
                                  @RequestParam("buyCount") String buyCount,
                                  @RequestParam("token") String token,
-                                 @RequestParam("ids") String ids){
+                                 @RequestParam("ids") String ids) throws InterruptedException {
         BizDto dto = new BizDto();
         dto.setName(name);
         if (StringUtils.isNotEmpty(startTime)){

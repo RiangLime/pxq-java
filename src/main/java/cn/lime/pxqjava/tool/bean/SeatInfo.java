@@ -1,6 +1,7 @@
 package cn.lime.pxqjava.tool.bean;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @Date: 2024/3/26 12:37
  */
 @Data
+@NoArgsConstructor
 public class SeatInfo {
     private String showSessionId;
     private String seatPlanId;
@@ -27,6 +29,7 @@ public class SeatInfo {
 
     private boolean hasActivity;
     private int canBuyCount;
+
 
     public SeatInfo(SeatCountInfo countInfo,SeatPlanInfo planInfo) {
         BeanUtils.copyProperties(countInfo,this);

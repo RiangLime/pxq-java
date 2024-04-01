@@ -18,6 +18,7 @@ public class BizDto implements Serializable {
     private String showId;
     private String sessionId;
     private String userSeatId;
+    private Double userSeatPrice;
     private Integer buyCount;
     private String token;
     private List<Integer> audienceIndexes;

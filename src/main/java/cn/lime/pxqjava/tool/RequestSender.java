@@ -531,7 +531,9 @@ public class RequestSender {
                 if (jsonObject.getInteger("statusCode") == 200) {
                     System.out.println("下单成功！请尽快支付！");
                     System.out.println(jsonObject.toJSONString());
-                } else {
+                } else if (jsonObject.getInteger("statusCode")==27902319){
+
+                }else {
                     throw new IOException("createOrder异常" + responseData);
                 }
             } else {

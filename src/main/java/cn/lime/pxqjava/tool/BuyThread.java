@@ -28,13 +28,14 @@ public class BuyThread implements Runnable {
     private String showId;
     private String sessionId;
     private String userSeatId;
+    private double seatPrice;
     private Integer buyCount;
     private String token;
     private List<Integer> audienceIndexes;
 
     private List<String> audienceIds = new ArrayList<>();
 
-    public BuyThread(String name, Long startTime, String showId, String sessionId, String userSeatId, Integer buyCount,
+    public BuyThread(String name, Long startTime, String showId, String sessionId, String userSeatId, Double price, Integer buyCount,
                      String token, List<Integer> audienceIndexes) {
         this.ticketName = name;
         this.startTime = startTime;
@@ -43,6 +44,7 @@ public class BuyThread implements Runnable {
         this.userSeatId = userSeatId;
         this.buyCount = buyCount;
         this.token = token;
+        this.seatPrice = price;
         this.audienceIndexes = audienceIndexes;
     }
 
@@ -113,66 +115,58 @@ public class BuyThread implements Runnable {
 //            }
 //        }
         // 座位信息
-
-        List<SeatCountInfo> seatCountInfos = RequestSender.getSeatCount(showId, sessionId);
-        List<SeatPlanInfo> seatPlanInfos = RequestSender.getSeatPlans(showId, sessionId);
-        List<SeatInfo> seatInfos = new ArrayList<>();
-        for (SeatCountInfo seatCountInfo : seatCountInfos) {
-            for (SeatPlanInfo seatPlanInfo : seatPlanInfos) {
-                if (seatCountInfo.getSeatPlanId().equals(seatPlanInfo.getSeatPlanId())) {
-                    seatInfos.add(new SeatInfo(seatCountInfo, seatPlanInfo));
-                    break;
-                }
-            }
-        }
-
-
-        log.info(JSON.toJSONString(seatCountInfos));
-        SeatInfo targetSeat = null;
-        // 没抢完
-        if (!targetEmpty) {
-            for (SeatInfo seatInfo : seatInfos) {
-                if (seatInfo.getCanBuyCount() >= buyCount && userSeatId.equals(seatInfo.getSeatPlanId())) {
-                    targetSeat = seatInfo;
-                    break;
-                } else if (seatInfo.getCanBuyCount() < buyCount && userSeatId.equals(seatInfo.getSeatPlanId())) {
-                    targetEmpty = true;
-                    break;
-                }
-            }
-        }
-        // 抢完了抢别的
-        else {
-            for (SeatInfo seatInfo : seatInfos) {
-                if (seatInfo.getCanBuyCount() >= buyCount) {
-                    targetSeat = seatInfo;
-                    break;
-                }
-            }
-        }
-
-        if (ObjectUtils.isEmpty(targetSeat)) {
-            log.warn("没有符合条件的座位，将为你继续搜寻其他在售场次");
-            allEmptyCnt++;
-            return;
-        }
-        String deliverMethod = RequestSender.getDeliverMethod(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(), buyCount, token);
-
-
-        if (deliverMethod.equals("EXPRESS")) {
-            AddressInfo addressInfo = RequestSender.getAddress(token);
-            ExpressFeeInfo expressFeeInfo = RequestSender.getExpressFee(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
-                    targetSeat.getCanBuyCount(), addressInfo.getLocationId(), token);
-            RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
-                    buyCount, deliverMethod, expressFeeInfo.getPriceItemVal(), addressInfo.getUsername(), addressInfo.getCellphone(),
-                    addressInfo.getAddressId(), addressInfo.getDetailAddress(), addressInfo.getLocationId(), audienceIds, token);
-        } else if (deliverMethod.equals("VENUE") || deliverMethod.equals("E_TICKET") || deliverMethod.equals("ID_CARD")) {
-            RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
+//
+//        List<SeatCountInfo> seatCountInfos = RequestSender.getSeatCount(showId, sessionId);
+//        List<SeatPlanInfo> seatPlanInfos = RequestSender.getSeatPlans(showId, sessionId);
+//        List<SeatInfo> seatInfos = new ArrayList<>();
+//        for (SeatCountInfo seatCountInfo : seatCountInfos) {
+//            for (SeatPlanInfo seatPlanInfo : seatPlanInfos) {
+//                if (seatCountInfo.getSeatPlanId().equals(seatPlanInfo.getSeatPlanId())) {
+//                    seatInfos.add(new SeatInfo(seatCountInfo, seatPlanInfo));
+//                    break;
+//                }
+//            }
+//        }
+//
+//
+//        log.info(JSON.toJSONString(seatCountInfos));
+//        SeatInfo targetSeat = null;
+//        // 没抢完
+//        if (!targetEmpty) {
+//            for (SeatInfo seatInfo : seatInfos) {
+//                if (seatInfo.getCanBuyCount() >= buyCount && userSeatId.equals(seatInfo.getSeatPlanId())) {
+//                    targetSeat = seatInfo;
+//                    break;
+//                } else if (seatInfo.getCanBuyCount() < buyCount && userSeatId.equals(seatInfo.getSeatPlanId())) {
+//                    targetEmpty = true;
+//                    break;
+//                }
+//            }
+//        }
+//        // 抢完了抢别的
+//        else {
+//            for (SeatInfo seatInfo : seatInfos) {
+//                if (seatInfo.getCanBuyCount() >= buyCount) {
+//                    targetSeat = seatInfo;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (ObjectUtils.isEmpty(targetSeat)) {
+//            log.warn("没有符合条件的座位，将为你继续搜寻其他在售场次");
+//            allEmptyCnt++;
+//            return;
+//        }
+//        String deliverMethod = RequestSender.getDeliverMethod(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(), buyCount, token);
+        String deliverMethod = "ID_CARD";
+        SeatInfo targetSeat = new SeatInfo();
+        targetSeat.setSeatPlanId(userSeatId);
+        targetSeat.setOriginalPrice(seatPrice);
+        RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
                     buyCount, deliverMethod, 0, null, null, null, null,
                     null, audienceIds, token);
-        } else {
-            throw new IOException("不支持的deliver method");
-        }
+
         success = true;
 
     }
