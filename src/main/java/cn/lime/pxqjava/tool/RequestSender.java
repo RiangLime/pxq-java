@@ -533,6 +533,8 @@ public class RequestSender {
                     System.out.println(jsonObject.toJSONString());
                 } else if (jsonObject.getInteger("statusCode")==27902319){
 
+                }else if (jsonObject.getInteger("statusCode")==22039999){
+                    throw new RuntimeException("下单异常: " + response.body().string());
                 }else {
                     throw new IOException("createOrder异常" + responseData);
                 }

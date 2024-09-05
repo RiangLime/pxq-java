@@ -71,38 +71,45 @@ public class BuyThread implements Runnable {
             audienceIds.add(audienceInfos.get(audienceId).getId());
         }
 
-        while (true) {
-            // 成功抢票
-            if (success) {
-                log.info("抢到票啦 债见");
-                return;
-            }
-            if (allEmptyCnt > 5) {
-                log.error("5次没票了  歇逼了");
-                return;
-            }
-            log.info("{} is Running", ticketName);
-            // 没到开始时间  继续
-            if (ObjectUtils.isNotEmpty(startTime) && System.currentTimeMillis() < startTime - 1000) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                continue;
-            }
-            try {
-                biz();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
-            }
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            biz();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
         }
+
+//        while (true) {
+//            // 成功抢票
+//            if (success) {
+//                log.info("抢到票啦 债见");
+//                return;
+//            }
+//            if (allEmptyCnt > 5) {
+//                log.error("5次没票了  歇逼了");
+//                return;
+//            }
+//            log.info("{} is Running", ticketName);
+//            // 没到开始时间  继续
+//            if (ObjectUtils.isNotEmpty(startTime) && System.currentTimeMillis() < startTime - 1000) {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                continue;
+//            }
+//            try {
+//                biz();
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//                e.printStackTrace();
+//            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 
     private void biz() throws Exception {

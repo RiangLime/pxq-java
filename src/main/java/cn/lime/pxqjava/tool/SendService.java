@@ -19,10 +19,10 @@ public class SendService {
     ExecutorService executor = Executors.newFixedThreadPool(10);
 
     public void deal(BizDto dto) throws InterruptedException {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             executor.submit(new BuyThread(dto.getName(),dto.getStartTime(),dto.getShowId(),dto.getSessionId(),
                     dto.getUserSeatId(),dto.getUserSeatPrice(),dto.getBuyCount(),dto.getToken(),dto.getAudienceIndexes()));
-            Thread.sleep(250);
+            Thread.sleep(500);
         }
     }
 
