@@ -158,20 +158,24 @@ public class BuyThread implements Runnable {
         }
         String deliverMethod = RequestSender.getDeliverMethod(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(), buyCount, token);
 
-
-        if (deliverMethod.equals("EXPRESS")) {
-            AddressInfo addressInfo = RequestSender.getAddress(token);
-            ExpressFeeInfo expressFeeInfo = RequestSender.getExpressFee(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
-                    targetSeat.getCanBuyCount(), addressInfo.getLocationId(), token);
-            RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
-                    buyCount, deliverMethod, expressFeeInfo.getPriceItemVal(), addressInfo.getUsername(), addressInfo.getCellphone(),
-                    addressInfo.getAddressId(), addressInfo.getDetailAddress(), addressInfo.getLocationId(), audienceIds, token);
-        } else if (deliverMethod.equals("VENUE") || deliverMethod.equals("E_TICKET") || deliverMethod.equals("ID_CARD")) {
-            RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
-                    buyCount, deliverMethod, 0, null, null, null, null,
-                    null, audienceIds, token);
-        } else {
-            throw new IOException("不支持的deliver method");
+        try {
+            if (deliverMethod.equals("EXPRESS")) {
+                AddressInfo addressInfo = RequestSender.getAddress(token);
+                ExpressFeeInfo expressFeeInfo = RequestSender.getExpressFee(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
+                        targetSeat.getCanBuyCount(), addressInfo.getLocationId(), token);
+                RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
+                        buyCount, deliverMethod, expressFeeInfo.getPriceItemVal(), addressInfo.getUsername(), addressInfo.getCellphone(),
+                        addressInfo.getAddressId(), addressInfo.getDetailAddress(), addressInfo.getLocationId(), audienceIds, token);
+            } else if (deliverMethod.equals("VENUE") || deliverMethod.equals("E_TICKET") || deliverMethod.equals("ID_CARD")) {
+                RequestSender.createOrder(showId, sessionId, targetSeat.getSeatPlanId(), targetSeat.getOriginalPrice(),
+                        buyCount, deliverMethod, 0, null, null, null, null,
+                        null, audienceIds, token);
+            } else {
+                throw new IOException("不支持的deliver method");
+            }
+        }catch (PxqException pxqException){
+            System.out.println(pxqException.getCode()+"-"+pxqException.getMessage());
+            success = true;
         }
         success = true;
 

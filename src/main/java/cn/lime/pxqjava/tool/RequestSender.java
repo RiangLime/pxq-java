@@ -196,7 +196,7 @@ public class RequestSender {
 
     public static void createOrder(String showId, String sessionId, String seatPlanId, double price, int qty, String deliverMethod,
                                    double expressFee, String receiver, String cellphone, String addressId, String detailAddress,
-                                   String locationCityId, List<String> audienceIds, String token) throws IOException {
+                                   String locationCityId, List<String> audienceIds, String token) throws IOException,PxqException {
         MediaType mediaType = MediaType.parse("application/json");
         JSONObject data = new JSONObject();
         switch (deliverMethod) {
@@ -531,7 +531,9 @@ public class RequestSender {
                 if (jsonObject.getInteger("statusCode") == 200) {
                     System.out.println("下单成功！请尽快支付！");
                     System.out.println(jsonObject.toJSONString());
-                } else {
+                } else if (jsonObject.getInteger("statusCode") == ErrorCode.ALREADY_BOUGHT.getCode()){
+                    throw new PxqException(ErrorCode.ALREADY_BOUGHT);
+                }else {
                     throw new IOException("createOrder异常" + responseData);
                 }
             } else {
